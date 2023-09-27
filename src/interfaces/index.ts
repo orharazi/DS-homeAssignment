@@ -5,13 +5,20 @@ export interface Drug {
 }
 
 export interface InteractionAlert {
-  severity: string;
+  severity: "high" | "low" | "N/A";
   description: string;
+}
+
+export enum severityToVarient {
+  "high" = "danger",
+  "low" = "warning",
+  "N/A" = "info",
 }
 
 export interface DrugSearchFormState {
   searchTerm: string;
   drugList: Drug[];
+  showList: boolean;
 }
 
 export interface DrugSearchFormProps {

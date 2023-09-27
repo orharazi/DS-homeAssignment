@@ -4,8 +4,11 @@ import DrugSearchForm from "./components/drugSearchForm";
 import PrescriptionTable from "./components/prescriptionTable";
 import DrugInteractionAlert from "./components/drugInteractionAlert";
 import { Drug, InteractionAlert } from "./interfaces";
+import { Col, Container, Row } from "react-bootstrap";
 
 class App extends Component {
+  private detectInteractionsTimer: NodeJS.Timeout | null = null;
+
   state = {
     prescriptionList: [] as Drug[],
     interactionAlerts: [] as InteractionAlert[],
@@ -90,28 +93,40 @@ class App extends Component {
     // Check if prescriptionList has changed
     if (this.state.prescriptionList !== prevState.prescriptionList) {
       // Run detectInteractions when prescriptionList changes
-      this.detectInteractions();
+      // Trigger detectInteractions when the user stops removing/adding for a brief moment
+      if (this.detectInteractionsTimer) {
+        clearTimeout(this.detectInteractionsTimer);
+      }
+      this.detectInteractionsTimer = setTimeout(this.detectInteractions, 500);
     }
   }
 
   render() {
     return (
-      <div className="App">
-        <h1>Doctor's Prescription</h1>
-        <DrugSearchForm
-          prescriptionList={this.state.prescriptionList}
-          onAddDrug={this.addDrugToPrescription}
-        />
-        <PrescriptionTable
-          prescriptionList={this.state.prescriptionList}
-          onDateChange={this.handleDateChange}
-          onRemoveDrug={this.handleRemoveDrug}
-        />
-        <DrugInteractionAlert
-          selectedDrugs={this.state.prescriptionList}
-          interactionAlerts={this.state.interactionAlerts}
-        />
-      </div>
+      <Container className="center-app">
+        <Row className="justify-content-center mb-3">
+          <h1>Doctor's Prescription</h1>
+          <Col lg="4">
+            <DrugSearchForm
+              prescriptionList={this.state.prescriptionList}
+              onAddDrug={this.addDrugToPrescription}
+            />
+          </Col>
+        </Row>
+        <Row className="justify-content-center mb-3">
+          <PrescriptionTable
+            prescriptionList={this.state.prescriptionList}
+            onDateChange={this.handleDateChange}
+            onRemoveDrug={this.handleRemoveDrug}
+          />
+        </Row>
+        <Row className="justify-content-center mb-3">
+          <DrugInteractionAlert
+            selectedDrugs={this.state.prescriptionList}
+            interactionAlerts={this.state.interactionAlerts}
+          />
+        </Row>
+      </Container>
     );
   }
 }

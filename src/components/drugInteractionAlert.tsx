@@ -1,18 +1,24 @@
 import React, { Component } from "react";
-import { Button, Alert } from "react-bootstrap";
+import { Button, Alert, Container, Row, Col } from "react-bootstrap";
 
-import { DrugInteractionAlertProps } from "../interfaces";
+import { DrugInteractionAlertProps, severityToVarient } from "../interfaces";
 
 class DrugInteractionAlert extends Component<DrugInteractionAlertProps> {
   render() {
     return (
-      <div>
+      <Container>
         {/* Display interaction alert */}
         {this.props.interactionAlerts.length > 0 &&
-          this.props.interactionAlerts.map((alert) => (
-            <Alert variant="danger">{alert.description}</Alert>
+          this.props.interactionAlerts.map((alert, idx) => (
+            <Row className="justify-content-center" key={idx}>
+              <Col xs={12} sm={8} md={6} lg={6}>
+                <Alert key={idx} variant={severityToVarient[alert.severity]}>
+                  {alert.description}
+                </Alert>
+              </Col>
+            </Row>
           ))}
-      </div>
+      </Container>
     );
   }
 }

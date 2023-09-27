@@ -1,5 +1,5 @@
-import React, { Component, ChangeEvent, FormEvent } from "react";
-import { Form, Button, Dropdown } from "react-bootstrap";
+import React, { Component, ChangeEvent } from "react";
+import { Form, Button, ListGroup, Container, Col, Row } from "react-bootstrap";
 import { DrugSearchFormProps, DrugSearchFormState, Drug } from "../interfaces";
 
 class DrugSearchForm extends Component<
@@ -13,6 +13,7 @@ class DrugSearchForm extends Component<
     this.state = {
       searchTerm: "",
       drugList: [],
+      showList: false,
     };
   }
 
@@ -47,6 +48,9 @@ class DrugSearchForm extends Component<
             code: data[2].RXCUIS[i].join("+"),
           });
         }
+        if (drugsData.length > 0) {
+          this.setState({ showList: true });
+        }
 
         this.setState({ drugList: drugsData });
       } catch (error) {
@@ -58,7 +62,11 @@ class DrugSearchForm extends Component<
   };
 
   handleAddDrug = (drug: Drug) => {
-    // avoid adding the same prescription
+    // Close drug list
+    this.setState({ showList: false, searchTerm: "" });
+    drug.prescriptionDate = new Date().toISOString().slice(0, 10);
+
+    // Avoid adding the same prescription
     if (!this.props.prescriptionList.find((d: Drug) => d.code === drug.code)) {
       this.props.onAddDrug(drug);
     }
@@ -66,9 +74,9 @@ class DrugSearchForm extends Component<
 
   render(): React.ReactNode {
     return (
-      <div>
-        <Dropdown>
-          <Dropdown.Toggle>
+      <Container>
+        <Row className="justify-content-center">
+          <Col xs={12} sm={8} md={6} lg={12}>
             <Form>
               <Form.Group controlId="searchTerm">
                 <Form.Control
@@ -80,28 +88,34 @@ class DrugSearchForm extends Component<
                 />
               </Form.Group>
             </Form>
-          </Dropdown.Toggle>
+          </Col>
+        </Row>
 
-          {/* Display drug list with "Add Drug" button */}
-          {this.state.drugList.length > 0 ? (
-            <Dropdown.Menu>
-              {this.state.drugList.map((drug) => (
-                <Dropdown.Item key={drug.code} href="#/action-3">
-                  <span>{drug.name}</span>
-                  <Button
-                    variant="success"
-                    onClick={() => this.handleAddDrug(drug)}
-                  >
-                    Add Drug
-                  </Button>
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          ) : (
-            <></>
-          )}
-        </Dropdown>
-      </div>
+        {/* Display drug list with "Add Drug" button */}
+        {this.state.drugList.length > 0 && this.state.showList ? (
+          <ListGroup>
+            {this.state.drugList.map((drug) => (
+              <ListGroup.Item key={drug.code}>
+                <Row>
+                  <Col xs={12} sm={8} md={6} lg={12} className="drug-name">
+                    <span>{drug.name}</span>
+                  </Col>
+                  <Col xs={12} sm={8} md={6} lg={12} className="right-align">
+                    <Button
+                      variant="success"
+                      onClick={() => this.handleAddDrug(drug)}
+                    >
+                      Add Drug
+                    </Button>
+                  </Col>
+                </Row>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        ) : (
+          <></>
+        )}
+      </Container>
     );
   }
 }
