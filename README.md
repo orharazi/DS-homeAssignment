@@ -16,11 +16,13 @@ Follow these steps to set up the application locally:
 
 2. Navigate to the project directory: `cd DS-homeAssignment`
 
-3. Install the required dependencies: `npm install`
+3. If you have node installed, you can run `npm install`,
+   (DOCKER: Otherwise, if you have docker installed you can use the following command: `docker build -t ds-homeassigmnet .`)
 
 ## Usage
 
 To start the development server and run the application, use the following command: `npm start`
+(DOCKER: If you choose to run on docker use the following command: `docker run -p 3000:3000 ds-homeassigmnet`)
 
 This will launch the application in your default web browser at `http://localhost:3000`.
 
@@ -32,5 +34,6 @@ This will launch the application in your default web browser at `http://localhos
 - I decided not to store the Alerts data in local storage and make an API call on load to get them because if some of the alerts changed, the user will see the newest alerts.
 - The alerts are sorted by severity. (high to low)
 - The API provider didn't provide options for severity, so I tried to understand it myself and also prevent wasting time. I saw three options: `N/A`, `low`, and `high`. These are the severities this app supports.
+- i used react-bootstrap lib for the styling.
 
 **I'm here for any questions; feel free to reach me through WhatsApp or phone call :)**
