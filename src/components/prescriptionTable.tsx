@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Table, Button, Image, Container, Col, Row } from "react-bootstrap";
+import { Image, Container, Col, Row } from "react-bootstrap";
 
 import { PrescriptionTableProps } from "../interfaces";
 
@@ -7,16 +7,20 @@ class PrescriptionTable extends Component<PrescriptionTableProps> {
   render() {
     return (
       <div>
-        <h2>Prescription Table</h2>
-        {this.props.prescriptionList.length > 0 ? (
+        {this.props.prescriptionList.length > 0 && (
           <>
-            <Container>
+            <h3 className="second-title">Prescriptions</h3>
+            <Container className="prescription-table">
               {this.props.prescriptionList.map((drug, idx) => (
-                <Row className="justify-content-center drug-row" key={idx}>
-                  <Col sm={5} xs={5} md={3} lg={3}>
-                    {drug.name}
+                <Row className="drug-row" key={idx}>
+                  <Col xs={5} sm={6} md={7} lg={7}>
+                    <span className="drug-name">{drug.name.split("(")[0]}</span>
+                    <br />
+                    <span className="drug-type">
+                      {"(" + drug.name.split("(")[1]}
+                    </span>
                   </Col>
-                  <Col sm={4} xs={4} md={3} lg={2}>
+                  <Col xs={4} sm={4} md={4} lg={4}>
                     <input
                       type="date"
                       value={drug.prescriptionDate}
@@ -25,22 +29,18 @@ class PrescriptionTable extends Component<PrescriptionTableProps> {
                       }
                     />
                   </Col>
-                  <Col sm={3} xs={3} md={2} lg={1} className="right-align">
+                  <Col xs={3} sm={2} md={1} lg={1}>
                     <Image
                       onClick={() => this.props.onRemoveDrug(drug)}
-                      src={process.env.PUBLIC_URL + "/close-icon.png"}
+                      src={process.env.PUBLIC_URL + "/icons/close-icon.png"}
                       className="remove-drug"
-                      height={30}
-                      width={30}
+                      height={20}
+                      width={20}
                     />
                   </Col>
                 </Row>
               ))}
             </Container>
-          </>
-        ) : (
-          <>
-            <div>no medicent given!</div>
           </>
         )}
       </div>

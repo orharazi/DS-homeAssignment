@@ -10,16 +10,21 @@ class App extends Component {
   private detectInteractionsTimer: NodeJS.Timeout | null = null;
 
   state = {
-    prescriptionList: [] as Drug[],
+    prescriptionList: (localStorage.getItem("prescriptionList")
+      ? JSON.parse(localStorage.getItem("prescriptionList") as string)
+      : []) as Drug[],
     interactionAlerts: [] as InteractionAlert[],
+    dropdownOpen: false,
   };
 
+  // Add new drug to prescription array
   addDrugToPrescription = (drug: Drug) => {
     this.setState((prevState: any) => ({
       prescriptionList: [...prevState.prescriptionList, drug],
     }));
   };
 
+  // Change date of prescription
   handleDateChange = (drug: Drug, date: string) => {
     const updatedPrescriptionList = this.state.prescriptionList.map((d) => {
       if (d.code === drug.code) {
@@ -31,6 +36,7 @@ class App extends Component {
     this.setState({ prescriptionList: updatedPrescriptionList });
   };
 
+  // Remode drug from prescription
   handleRemoveDrug = (drug: Drug) => {
     const updatedPrescriptionList = this.state.prescriptionList.filter(
       (d) => d.code !== drug.code
@@ -38,6 +44,7 @@ class App extends Component {
     this.setState({ prescriptionList: updatedPrescriptionList });
   };
 
+  // Detect if there are some interaction and update interactionAlerts
   detectInteractions = async () => {
     try {
       if (this.state.prescriptionList.length > 0) {
@@ -74,6 +81,13 @@ class App extends Component {
             }
           });
 
+          // Sorting the alerts by severity
+          const order = { high: 1, low: 2, "N/A": 3 };
+
+          uniqueInteractionAlerts.sort(
+            (a, b) => order[a.severity] - order[b.severity]
+          );
+
           // Setting the unique alerts
           this.setState({ interactionAlerts: uniqueInteractionAlerts });
         } else {
@@ -89,10 +103,19 @@ class App extends Component {
     }
   };
 
+  // If the user had prescriptionList saved, it will load the interactions on load.
+  componentDidMount() {
+    if (this.state.prescriptionList.length > 0) this.detectInteractions();
+  }
+
   componentDidUpdate(prevProps: any, prevState: any) {
     // Check if prescriptionList has changed
     if (this.state.prescriptionList !== prevState.prescriptionList) {
-      // Run detectInteractions when prescriptionList changes
+      // Save old prescriptionList in localStorge
+      localStorage.setItem(
+        "prescriptionList",
+        JSON.stringify(this.state.prescriptionList)
+      );
       // Trigger detectInteractions when the user stops removing/adding for a brief moment
       if (this.detectInteractionsTimer) {
         clearTimeout(this.detectInteractionsTimer);
@@ -105,26 +128,32 @@ class App extends Component {
     return (
       <Container className="center-app">
         <Row className="justify-content-center mb-3">
-          <h1>Doctor's Prescription</h1>
-          <Col lg="4">
+          <h1 className="mb-3">Drug Prescription App</h1>
+          <Col xs={12} sm={10} md={8} lg={6}>
             <DrugSearchForm
               prescriptionList={this.state.prescriptionList}
               onAddDrug={this.addDrugToPrescription}
             />
           </Col>
         </Row>
+
         <Row className="justify-content-center mb-3">
-          <PrescriptionTable
-            prescriptionList={this.state.prescriptionList}
-            onDateChange={this.handleDateChange}
-            onRemoveDrug={this.handleRemoveDrug}
-          />
+          <Col xs={12} sm={10} md={8} lg={6}>
+            <PrescriptionTable
+              prescriptionList={this.state.prescriptionList}
+              onDateChange={this.handleDateChange}
+              onRemoveDrug={this.handleRemoveDrug}
+            />
+          </Col>
         </Row>
+
         <Row className="justify-content-center mb-3">
-          <DrugInteractionAlert
-            selectedDrugs={this.state.prescriptionList}
-            interactionAlerts={this.state.interactionAlerts}
-          />
+          <Col xs={12} sm={10} md={8} lg={6}>
+            <DrugInteractionAlert
+              selectedDrugs={this.state.prescriptionList}
+              interactionAlerts={this.state.interactionAlerts}
+            />
+          </Col>
         </Row>
       </Container>
     );

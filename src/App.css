@@ -1,5 +1,6 @@
 .center-app {
   text-align: center;
+  margin-top: 80px;
 }
 
 .drug-list {
@@ -12,12 +13,12 @@
   text-align: right;
 }
 
-.drug-name {
+.left-align {
   text-align: left;
 }
 
-.custom-dropdown-toggle {
-  width: 1000px;
+.second-title {
+  color: rgb(104, 104, 104);
 }
 
 .remove-drug {
@@ -28,4 +29,33 @@
   margin-top: 30px;
   margin-bottom: 30px;
   height: 60px;
+}
+
+.search-result-row {
+  height: 50px;
+}
+
+.prescription-table {
+  border: 2px;
+  border-style: solid;
+  border-color: #dee2e6;
+  border-radius: 20px;
+}
+
+.drug-search-container {
+  height: 100px;
+  z-index: 1000;
+}
+
+.search-result-list-item {
+  z-index: 1000;
+}
+
+.drug-name {
+  font-weight: bold;
+}
+
+.drug-type {
+  font-size: 15px;
+  color: rgb(104, 104, 104);
 }
